@@ -29,28 +29,24 @@ void on_deposit_confirm_clicked(GtkWidget *widget, gpointer data) {
 }
 
 void on_deposit_button_clicked(GtkWidget *widget, gpointer data) {
-    // Create deposit dialog
+
     GtkWidget *dialog;
     dialog = gtk_dialog_new_with_buttons("Deposit", GTK_WINDOW(window), GTK_DIALOG_MODAL, "_OK", GTK_RESPONSE_OK, "_Cancel", GTK_RESPONSE_CANCEL, NULL);
 
-    // Create amount entry
     GtkWidget *amount_entry;
     amount_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(amount_entry), "Enter amount");
 
-    // Add amount entry to dialog
     GtkWidget *content_area;
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
     gtk_container_add(GTK_CONTAINER(content_area), amount_entry);
     gtk_widget_show_all(dialog);
 
-    // Prepare data to pass to the callback
     struct DialogData *dialog_data = g_new(struct DialogData, 1);
     dialog_data->dialog = dialog;
     dialog_data->entry = amount_entry;
     dialog_data->user = (struct User *)data;
 
-    // Run deposit dialog
     int result = gtk_dialog_run(GTK_DIALOG(dialog));
     if (result == GTK_RESPONSE_OK) {
         on_deposit_confirm_clicked(NULL, dialog_data);
@@ -75,28 +71,24 @@ void on_withdraw_confirm_clicked(GtkWidget *widget, gpointer data) {
 }
 
 void on_withdraw_button_clicked(GtkWidget *widget, gpointer data) {
-    // Create withdraw dialog
+
     GtkWidget *dialog;
     dialog = gtk_dialog_new_with_buttons("Withdraw", GTK_WINDOW(window), GTK_DIALOG_MODAL, "_OK", GTK_RESPONSE_OK, "_Cancel", GTK_RESPONSE_CANCEL, NULL);
 
-    // Create amount entry
     GtkWidget *amount_entry;
     amount_entry = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(amount_entry), "Enter amount");
 
-    // Add amount entry to dialog
     GtkWidget *content_area;
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
     gtk_container_add(GTK_CONTAINER(content_area), amount_entry);
     gtk_widget_show_all(dialog);
 
-    // Prepare data to pass to the callback
     struct DialogData *dialog_data = g_new(struct DialogData, 1);
     dialog_data->dialog = dialog;
     dialog_data->entry = amount_entry;
     dialog_data->user = (struct User *)data;
 
-    // Run withdraw dialog
     int result = gtk_dialog_run(GTK_DIALOG(dialog));
     if (result == GTK_RESPONSE_OK) {
         on_withdraw_confirm_clicked(NULL, dialog_data);
@@ -107,44 +99,43 @@ void on_withdraw_button_clicked(GtkWidget *widget, gpointer data) {
 }
 
 void displayMenu(struct User *user) {
-    // Create main window
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "ATM Application");
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    gtk_window_set_default_size(GTK_WINDOW(window), 400, 100);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-
-    // Create layout
-    GtkWidget *grid;
-    grid = gtk_grid_new();
+    GtkWidget *grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    // Create name label
     label_name = gtk_label_new(NULL);
     gtk_label_set_text(GTK_LABEL(label_name), user->name);
     gtk_grid_attach(GTK_GRID(grid), label_name, 0, 0, 1, 1);
+    gtk_widget_set_halign(label_name, GTK_ALIGN_CENTER);
 
-    // Create balance label
     label_balance = gtk_label_new(NULL);
-    updateMainDisplay(user); // Update balance label initially
+    updateMainDisplay(user);
     gtk_grid_attach(GTK_GRID(grid), label_balance, 0, 1, 1, 1);
+    gtk_widget_set_halign(label_balance, GTK_ALIGN_CENTER);
 
-    // Create withdraw button
     button_withdraw = gtk_button_new_with_label("Withdraw");
     g_signal_connect(button_withdraw, "clicked", G_CALLBACK(on_withdraw_button_clicked), user);
     gtk_grid_attach(GTK_GRID(grid), button_withdraw, 0, 2, 1, 1);
+    gtk_widget_set_halign(button_withdraw, GTK_ALIGN_CENTER);
 
-    // Create deposit button
     button_deposit = gtk_button_new_with_label("Deposit");
     g_signal_connect(button_deposit, "clicked", G_CALLBACK(on_deposit_button_clicked), user);
     gtk_grid_attach(GTK_GRID(grid), button_deposit, 0, 3, 1, 1);
+    gtk_widget_set_halign(button_deposit, GTK_ALIGN_CENTER);
 
-    // Create exit button
     button_exit = gtk_button_new_with_label("Exit");
     g_signal_connect(button_exit, "clicked", G_CALLBACK(gtk_main_quit), NULL);
     gtk_grid_attach(GTK_GRID(grid), button_exit, 0, 4, 1, 1);
+    gtk_widget_set_halign(button_exit, GTK_ALIGN_CENTER);
 
-    // Show window and all widgets
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 20);
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 40);
+
     gtk_widget_show_all(window);
 }
