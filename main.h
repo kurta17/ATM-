@@ -1,11 +1,17 @@
+#ifndef MAIN_H
+#define MAIN_H
 
-struct User
-{
+struct User {
     char name[50];
     int balance;
 };
 
-void displayMenu(struct User *user);
-void withdraw(struct User *user);
-void deposit(struct User *user);
-void exitProgram();
+struct DialogData {
+    GtkWidget *dialog;
+    GtkWidget *entry;
+    struct User *user;
+};
+
+extern struct User user;
+
+#endif // MAIN_H
