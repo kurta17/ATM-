@@ -1,12 +1,31 @@
 #include <gtk/gtk.h>
 #include "main.h"
 
-void loadUserData(struct User *user);
+void loadUserData(struct User *user, int id); // Corrected declaration
 
-void displayMenu(struct User *user);
+int main(int argc, char *argv[]) {
+    gtk_init(&argc, &argv);
+    int id;
 
+    printf("Enter your ID: ");
+    scanf("%d", &id);
 
-void loadUserData(struct User *user) {
+    struct User user;
+    loadUserData(&user, id); // Load user data based on ID entered
+
+    if (user.id == -1) {
+        printf("User with ID %d does not exist.\n", id);
+        return EXIT_FAILURE;
+    }
+
+    displayMenu(&user);
+
+    gtk_main();
+
+    return 0;
+}
+
+void loadUserData(struct User *user, int id) {
     FILE *file = fopen("data.txt", "r");
     if (file == NULL) {
         fprintf(stderr, "Could not open data.txt\n");
@@ -14,25 +33,16 @@ void loadUserData(struct User *user) {
     }
 
     char line[100];
-    if (fgets(line, sizeof(line), file) != NULL) {
-        int id;
-        sscanf(line, "%d :[\"%[^\"]\", %d]", &id, user->name, &user->balance);
-        user->id = id; // Assuming id is read from data.txt
+    while (fgets(line, sizeof(line), file) != NULL) {
+        int file_id;
+        sscanf(line, "%d :[\"%[^\"]\", %d]", &file_id, user->name, &user->balance);
+        if (file_id == id) {
+            user->id = id;
+            fclose(file);
+            return;
+        }
     }
 
+    user->id = -1; // Indicate user does not exist
     fclose(file);
-}
-
-
-int main(int argc, char *argv[]) {
-    gtk_init(&argc, &argv);
-
-    struct User user;
-    loadUserData(&user);
-
-    displayMenu(&user);
-
-    gtk_main();
-
-    return 0;
 }

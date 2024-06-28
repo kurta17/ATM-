@@ -15,15 +15,9 @@ struct DialogData {
     struct User *user;
 };
 
-void loadUserData(struct User *user);
-
-extern GtkWidget *window;
-extern GtkWidget *label_name;
-extern GtkWidget *label_balance;
-extern GtkWidget *button_withdraw;
-extern GtkWidget *button_deposit;
-extern GtkWidget *button_exit;
-
-extern struct User user;
+void loadUserData(struct User *user, int id);
+void displayMenu(struct User *user);
+void updateMainDisplay(struct User *user);
+void updateUserData(struct User *user);
 
 #endif // MAIN_H

@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include "main.h"
+#include "main.h"  
 
 GtkWidget *window;
 GtkWidget *label_name;
@@ -19,7 +19,6 @@ void updateUserData(struct User *user) {
 
     fclose(file);
 }
-
 
 void updateMainDisplay(struct User *user) {
     char *balance_label_text = g_strdup_printf("Balance: %d", user->balance);
