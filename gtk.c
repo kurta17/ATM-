@@ -8,6 +8,19 @@ GtkWidget *button_withdraw;
 GtkWidget *button_deposit;
 GtkWidget *button_exit;
 
+void updateUserData(struct User *user) {
+    FILE *file = fopen("data.txt", "w");
+    if (file == NULL) {
+        fprintf(stderr, "Could not open data.txt for writing\n");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(file, "%d :[\"%s\", %d]\n", user->id, user->name, user->balance);
+
+    fclose(file);
+}
+
+
 void updateMainDisplay(struct User *user) {
     char *balance_label_text = g_strdup_printf("Balance: %d", user->balance);
     gtk_label_set_text(GTK_LABEL(label_balance), balance_label_text);
@@ -22,6 +35,7 @@ void on_deposit_confirm_clicked(GtkWidget *widget, gpointer data) {
     if (amount > 0) {
         dialog_data->user->balance += amount;
         updateMainDisplay(dialog_data->user);
+        updateUserData(dialog_data->user); // Update data.txt
     }
 
     gtk_widget_destroy(dialog_data->dialog);
@@ -29,7 +43,6 @@ void on_deposit_confirm_clicked(GtkWidget *widget, gpointer data) {
 }
 
 void on_deposit_button_clicked(GtkWidget *widget, gpointer data) {
-
     GtkWidget *dialog;
     dialog = gtk_dialog_new_with_buttons("Deposit", GTK_WINDOW(window), GTK_DIALOG_MODAL, "_OK", GTK_RESPONSE_OK, "_Cancel", GTK_RESPONSE_CANCEL, NULL);
 
@@ -64,6 +77,7 @@ void on_withdraw_confirm_clicked(GtkWidget *widget, gpointer data) {
     if (amount > 0 && amount <= dialog_data->user->balance) {
         dialog_data->user->balance -= amount;
         updateMainDisplay(dialog_data->user);
+        updateUserData(dialog_data->user); // Update data.txt
     }
 
     gtk_widget_destroy(dialog_data->dialog);
@@ -71,7 +85,6 @@ void on_withdraw_confirm_clicked(GtkWidget *widget, gpointer data) {
 }
 
 void on_withdraw_button_clicked(GtkWidget *widget, gpointer data) {
-
     GtkWidget *dialog;
     dialog = gtk_dialog_new_with_buttons("Withdraw", GTK_WINDOW(window), GTK_DIALOG_MODAL, "_OK", GTK_RESPONSE_OK, "_Cancel", GTK_RESPONSE_CANCEL, NULL);
 
