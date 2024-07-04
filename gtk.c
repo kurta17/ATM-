@@ -1,12 +1,38 @@
 #include <gtk/gtk.h>
 #include "main.h"  
-
+#include "gtk_withdraw.c"
+ 
 GtkWidget *window;
 GtkWidget *label_name;
 GtkWidget *label_balance;
 GtkWidget *button_withdraw;
 GtkWidget *button_deposit;
 GtkWidget *button_exit;
+
+
+// User Management Functionality //
+
+void loadUserData(struct User *user, int id) {
+    FILE *file = fopen("data.txt", "r");
+    if (file == NULL) {
+        fprintf(stderr, "Could not open data.txt\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char line[100];
+    while (fgets(line, sizeof(line), file) != NULL) {
+        int file_id;
+        sscanf(line, "%d :[\"%[^\"]\", %d]", &file_id, user->name, &user->balance);
+        if (file_id == id) {
+            user->id = id;
+            fclose(file);
+            return;
+        }
+    }
+
+    user->id = -1; // Indicate user does not exist
+    fclose(file);
+}
 
 void updateUserData(struct User *user) {
     FILE *file = fopen("data.txt", "w");
@@ -20,11 +46,8 @@ void updateUserData(struct User *user) {
     fclose(file);
 }
 
-void updateMainDisplay(struct User *user) {
-    char *balance_label_text = g_strdup_printf("Balance: %d", user->balance);
-    gtk_label_set_text(GTK_LABEL(label_balance), balance_label_text);
-    g_free(balance_label_text);
-}
+
+//  Deposit Functionality //
 
 void on_deposit_confirm_clicked(GtkWidget *widget, gpointer data) {
     struct DialogData *dialog_data = (struct DialogData *)data;
@@ -68,20 +91,8 @@ void on_deposit_button_clicked(GtkWidget *widget, gpointer data) {
     }
 }
 
-void on_withdraw_confirm_clicked(GtkWidget *widget, gpointer data) {
-    struct DialogData *dialog_data = (struct DialogData *)data;
-    const gchar *amount_str = gtk_entry_get_text(GTK_ENTRY(dialog_data->entry));
-    int amount = atoi(amount_str);
 
-    if (amount > 0 && amount <= dialog_data->user->balance) {
-        dialog_data->user->balance -= amount;
-        updateMainDisplay(dialog_data->user);
-        updateUserData(dialog_data->user); // Update data.txt
-    }
-
-    gtk_widget_destroy(dialog_data->dialog);
-    g_free(dialog_data);
-}
+// Withdraw Functionality // 
 
 void on_withdraw_button_clicked(GtkWidget *widget, gpointer data) {
     GtkWidget *dialog;
@@ -109,6 +120,31 @@ void on_withdraw_button_clicked(GtkWidget *widget, gpointer data) {
         g_free(dialog_data);
     }
 }
+
+
+// void on_withdraw_confirm_clicked(GtkWidget *widget, gpointer data) {
+//     struct DialogData *dialog_data = (struct DialogData *)data;
+//     const gchar *amount_str = gtk_entry_get_text(GTK_ENTRY(dialog_data->entry));
+//     int amount = atoi(amount_str);
+
+//     if (amount > 0 && amount <= dialog_data->user->balance) {
+//         dialog_data->user->balance -= amount;
+//         updateMainDisplay(dialog_data->user);
+//         updateUserData(dialog_data->user); 
+//     }
+
+//     gtk_widget_destroy(dialog_data->dialog);
+//     g_free(dialog_data);
+// }
+
+// Display Menu Functionality //
+
+void updateMainDisplay(struct User *user) {
+    char *balance_label_text = g_strdup_printf("Balance: %d", user->balance);
+    gtk_label_set_text(GTK_LABEL(label_balance), balance_label_text);
+    g_free(balance_label_text);
+}
+
 
 void displayMenu(struct User *user) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

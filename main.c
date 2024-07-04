@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 #include "main.h"
 
-void loadUserData(struct User *user, int id); // Corrected declaration
+void loadUserData(struct User *user, int id); 
 
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
@@ -23,26 +23,4 @@ int main(int argc, char *argv[]) {
     gtk_main();
 
     return 0;
-}
-
-void loadUserData(struct User *user, int id) {
-    FILE *file = fopen("data.txt", "r");
-    if (file == NULL) {
-        fprintf(stderr, "Could not open data.txt\n");
-        exit(EXIT_FAILURE);
-    }
-
-    char line[100];
-    while (fgets(line, sizeof(line), file) != NULL) {
-        int file_id;
-        sscanf(line, "%d :[\"%[^\"]\", %d]", &file_id, user->name, &user->balance);
-        if (file_id == id) {
-            user->id = id;
-            fclose(file);
-            return;
-        }
-    }
-
-    user->id = -1; // Indicate user does not exist
-    fclose(file);
 }
