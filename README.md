@@ -72,7 +72,7 @@ gcc `pkg-config --cflags gtk+-3.0` -o atm_system atm_system.c `pkg-config --libs
 
 ### Key Functions
 
-- `displayMenu(struct User *user)`: Displays the main window with user information and action buttons.
+- `displayMenu(struct User *user)`:  Displays the main window with user information and action buttons.
 - `on_withdraw_clicked()`: Handles the withdraw button click event.
 - `on_deposit_clicked()`: Handles the deposit button click event.
 - `on_exit_clicked()`: Handles the exit button click event.
